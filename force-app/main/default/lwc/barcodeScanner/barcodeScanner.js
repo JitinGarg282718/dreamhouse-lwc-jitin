@@ -6,7 +6,7 @@ import { getBarcodeScanner } from 'lightning/mobileCapabilities';
 export default class BarcodeScanner extends NavigationMixin(LightningElement) {
     myScanner;
     scanButtonEnabled = false;
-    scannedQrCode = '';
+    scannedQrCode = ''; //initialize with blank value
 
     // When the component is initialized, determine whether to enable the Scan button
     connectedCallback() {
