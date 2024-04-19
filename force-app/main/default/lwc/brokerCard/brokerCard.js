@@ -28,6 +28,7 @@ export default class BrokerCard extends NavigationMixin(LightningElement) {
         return getFieldValue(this.property.data, BROKER_FIELD);
     }
 
+    //this function handle the navigation to the propery record
     handleNavigateToRecord() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
