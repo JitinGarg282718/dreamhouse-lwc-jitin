@@ -16,6 +16,7 @@ export default class BarcodeScanner extends NavigationMixin(LightningElement) {
         }
     }
 
+    // this function will handle the BeginScan click event
     async handleBeginScanClick() {
         // Reset scannedQrCode to empty string before starting a new scan
         this.scannedQrCode = '';
