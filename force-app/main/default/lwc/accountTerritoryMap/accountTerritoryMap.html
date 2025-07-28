@@ -1,0 +1,230 @@
+<template>
+    <div class="slds-card">
+        <!-- Header Section -->
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:location" alternative-text="Account Territory Map" title="Account Territory Map"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span>Account Territory Map</span>
+                    </h2>
+                    <p class="slds-text-body_small slds-line-height_reset">
+                        {accountCount} accounts across {territoryCount} territories
+                    </p>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <div class="slds-button-group" role="group">
+                    <lightning-button 
+                        label={filterButtonLabel}
+                        onclick={toggleFilters}
+                        variant="neutral"
+                        icon-name="utility:filterList">
+                    </lightning-button>
+                    <lightning-button 
+                        label={boundaryButtonLabel}
+                        onclick={toggleTerritoryBoundaries}
+                        variant="neutral"
+                        icon-name="utility:world">
+                    </lightning-button>
+                    <lightning-button 
+                        label="Refresh"
+                        onclick={refreshData}
+                        variant="neutral"
+                        icon-name="utility:refresh">
+                    </lightning-button>
+                    <lightning-button 
+                        label="Export"
+                        onclick={exportData}
+                        variant="neutral"
+                        icon-name="utility:download"
+                        disabled={isLoading}>
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <template if:true={isLoading}>
+            <div class="slds-is-relative slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading accounts..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Filters Section -->
+        <template if:true={showFilters}>
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-section slds-is-open">
+                    <h3 class="slds-section__title slds-theme_shade">
+                        <span class="slds-truncate slds-p-horizontal_small" title="Filters">Filters</span>
+                    </h3>
+                    <div class="slds-section__content">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <!-- Search -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                <lightning-input 
+                                    type="search"
+                                    label="Search Accounts"
+                                    placeholder="Search by account name or city..."
+                                    value={searchKey}
+                                    onchange={handleSearchKeyChange}>
+                                </lightning-input>
+                            </div>
+                            
+                            <!-- Page Size -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                <lightning-combobox
+                                    label="Max Records"
+                                    value={pageSize}
+                                    placeholder="Select max records"
+                                    options={pageSizeOptions}
+                                    onchange={handlePageSizeChange}>
+                                </lightning-combobox>
+                            </div>
+                            
+                            <!-- Clear Filters -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-grid slds-grid_align-end">
+                                <lightning-button 
+                                    label="Clear Filters"
+                                    onclick={clearFilters}
+                                    variant="neutral"
+                                    class="slds-m-top_large">
+                                </lightning-button>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+                            <!-- Territory Filter -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                <lightning-dual-listbox
+                                    label="Territories"
+                                    source-label="Available Territories"
+                                    selected-label="Selected Territories"
+                                    options={territoryOptions}
+                                    value={selectedTerritories}
+                                    onchange={handleTerritoryChange}>
+                                </lightning-dual-listbox>
+                            </div>
+                            
+                            <!-- Industry Filter -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                <lightning-dual-listbox
+                                    label="Industries"
+                                    source-label="Available Industries"
+                                    selected-label="Selected Industries"
+                                    options={industryOptions}
+                                    value={selectedIndustries}
+                                    onchange={handleIndustryChange}>
+                                </lightning-dual-listbox>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+                            <!-- Revenue Filters -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                <lightning-input 
+                                    type="number"
+                                    label="Minimum Annual Revenue"
+                                    placeholder="Enter minimum revenue..."
+                                    value={minRevenue}
+                                    formatter="currency"
+                                    step="1000"
+                                    onchange={handleMinRevenueChange}>
+                                </lightning-input>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                                <lightning-input 
+                                    type="number"
+                                    label="Maximum Annual Revenue"
+                                    placeholder="Enter maximum revenue..."
+                                    value={maxRevenue}
+                                    formatter="currency"
+                                    step="1000"
+                                    onchange={handleMaxRevenueChange}>
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Map Section -->
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="map-container">
+                <!-- Map Controls -->
+                <div class="map-controls">
+                    <div class="slds-button-group" role="group">
+                        <lightning-button-icon 
+                            icon-name="utility:layers"
+                            alternative-text="Toggle Territory Boundaries"
+                            title="Toggle Territory Boundaries"
+                            onclick={toggleTerritoryBoundaries}
+                            variant={showTerritoryBoundaries ? 'brand' : 'border-filled'}>
+                        </lightning-button-icon>
+                        <lightning-button-icon 
+                            icon-name="utility:groups"
+                            alternative-text="Toggle Account Clustering"
+                            title="Toggle Account Clustering"
+                            onclick={toggleAccountClusters}
+                            variant={showAccountClusters ? 'brand' : 'border-filled'}>
+                        </lightning-button-icon>
+                    </div>
+                </div>
+                
+                <!-- Map -->
+                <div class="map" lwc:dom="manual"></div>
+                
+                <!-- Map Legend -->
+                <template if:true={hasTerritories}>
+                    <div class="map-legend">
+                        <h4 class="slds-text-heading_small slds-m-bottom_x-small">Territory Legend</h4>
+                        <div class="legend-items">
+                            <template for:each={territoriesWithColorStyle} for:item="territory">
+                                <div key={territory.territoryId} class="legend-item">
+                                    <div class="legend-color" style={territory.colorStyle}></div>
+                                    <span class="legend-label">
+                                        {territory.territoryName} ({territory.accountCount})
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Footer with Statistics -->
+        <footer class="slds-card__footer">
+            <div class="slds-grid slds-grid_align-spread">
+                <div class="slds-col">
+                    <div class="slds-text-body_small">
+                        <lightning-icon icon-name="utility:account" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                        <strong>{accountCount}</strong> accounts displayed
+                    </div>
+                </div>
+                <div class="slds-col">
+                    <div class="slds-text-body_small">
+                        <lightning-icon icon-name="utility:world" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                        <strong>{territoryCount}</strong> territories
+                    </div>
+                </div>
+                <div class="slds-col">
+                    <div class="slds-text-body_small slds-text-align_right">
+                        <template if:false={hasAccounts}>
+                            <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                            No accounts found matching current filters
+                        </template>
+                        <template if:true={hasAccounts}>
+                            <lightning-icon icon-name="utility:success" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                            Map ready
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</template>
