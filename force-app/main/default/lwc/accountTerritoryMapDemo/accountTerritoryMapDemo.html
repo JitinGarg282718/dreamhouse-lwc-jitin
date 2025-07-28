@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Account Territory Map Demo" icon-name="standard:location">
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-m-bottom_medium">
+                <p class="slds-text-body_regular">
+                    This component displays up to 5,000 accounts on an interactive map with territory boundaries. 
+                    Features include:
+                </p>
+                <ul class="slds-list_dotted slds-m-left_large">
+                    <li>Territory boundary visualization with different colors</li>
+                    <li>Account clustering for better performance</li>
+                    <li>Support for China-based accounts with alternative map tiles</li>
+                    <li>Interactive filtering by territory, country, and search terms</li>
+                    <li>Responsive design for mobile and desktop</li>
+                </ul>
+            </div>
+            
+            <!-- Account Territory Map Component -->
+            <c-account-territory-map
+                height={mapHeight}
+                show-filters={showFilters}
+                default-countries={defaultCountries}
+                max-records={maxRecords}
+                include-china={includeChina}
+            ></c-account-territory-map>
+        </div>
+    </lightning-card>
+</template>

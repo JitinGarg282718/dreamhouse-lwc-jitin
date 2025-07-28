@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__Tab</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__Tab,lightningCommunity__Page,lightningCommunity__Default">
+            <property name="height" type="String" default="600px" label="Map Height" description="Height of the map container (e.g., 400px, 50vh)"/>
+            <property name="showFilters" type="Boolean" default="true" label="Show Filters" description="Display filter controls above the map"/>
+            <property name="defaultCountries" type="String" label="Default Countries" description="Comma-separated list of countries to filter by default (e.g., United States, Canada, China)"/>
+            <property name="maxRecords" type="Integer" default="5000" label="Maximum Records" description="Maximum number of accounts to display on the map"/>
+            <property name="includeChina" type="Boolean" default="true" label="Include China" description="Include accounts from China in the map display"/>
+        </targetConfig>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="height" type="String" default="400px" label="Map Height" description="Height of the map container (e.g., 400px, 50vh)"/>
+            <property name="showFilters" type="Boolean" default="false" label="Show Filters" description="Display filter controls above the map"/>
+            <property name="maxRecords" type="Integer" default="1000" label="Maximum Records" description="Maximum number of accounts to display on the map"/>
+            <property name="includeChina" type="Boolean" default="true" label="Include China" description="Include accounts from China in the map display"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
