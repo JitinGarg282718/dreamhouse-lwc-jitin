@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Color__c</fullName>
+    <description>Color code for territory boundary display (hex format)</description>
+    <externalId>false</externalId>
+    <label>Color</label>
+    <length>7</length>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
